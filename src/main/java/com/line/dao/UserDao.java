@@ -14,6 +14,8 @@ public class UserDao {
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);
+                            // DriverManager 클래스는 메모리에 로드된 드라이버 클래스를 관리.
+        //Query 문 작성
         PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO users(id, name, password) value (?,?,?)"
         );
@@ -37,6 +39,7 @@ public class UserDao {
         ResultSet rs = pstmt.executeQuery();
         rs.next();
         User user = new User(rs.getString("id"), rs.getString("name"),rs.getString("password"));
+        //사용 종료 close.
         rs.close();
         pstmt.close();
         connection.close();
