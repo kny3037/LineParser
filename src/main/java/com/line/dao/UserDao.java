@@ -6,7 +6,8 @@ import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
-    public void add() throws SQLException, ClassNotFoundException {
+
+    private Connection getConnection() throws ClassNotFoundException, SQLException {
         Map<String, String> env = System.getenv();
         String dbHost = env.get("DB_HOST");
         String dbUser = env.get("DB_USER");
@@ -14,7 +15,14 @@ public class UserDao {
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);
-                            // DriverManager 클래스는 메모리에 로드된 드라이버 클래스를 관리.
+        // DriverManager 클래스는 메모리에 로드된 드라이버 클래스를 관리.
+
+        return conn;
+    }
+
+    public void add() throws SQLException, ClassNotFoundException {
+        Connection conn = getConnection();
+
         //Query 문 작성
         PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO users(id, name, password) value (?,?,?)"
@@ -28,11 +36,10 @@ public class UserDao {
         conn.close();
     }
 
-    public User select(String id) throws SQLException {
-        Map<String, String> env = System.getenv();
-        Connection connection = DriverManager.getConnection(
-                env.get("DB_HOST"), env.get("DB_USER"), env.get("DB_PASSWORD")
-        );
+    public User select(String id) throws SQLException, ClassNotFoundException {
+
+        Connection connection = getConnection();
+
         //Query 문 작성
         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM users where id = ?");
         pstmt.setString(1,id);
