@@ -18,6 +18,17 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
+    public void deleteAll() throws SQLException, ClassNotFoundException {
+        Connection connection = connectionMaker.getConnection();
+
+        PreparedStatement pstmt = connection.prepareStatement("DELETE FROM users");
+        pstmt.executeUpdate();
+
+        pstmt.close();
+        connection.close();
+
+    }
+
     public void add(User user) throws SQLException, ClassNotFoundException {
         Connection conn = connectionMaker.getConnection();
 
@@ -53,6 +64,8 @@ public class UserDao {
 
         return user;
     }
+
+
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         UserDao userDao = new UserDao();
