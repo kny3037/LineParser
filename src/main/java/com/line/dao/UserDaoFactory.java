@@ -7,6 +7,7 @@ public class UserDaoFactory {
     @Bean
     public UserDao awsUserDao(){  //날개 5개 선풍기
         AWSConnectionMaker awsConnectionMaker = new AWSConnectionMaker();
+        //context 재사용이 많이 되는 부분?
         UserDao userDao = new UserDao(awsConnectionMaker);
         return userDao;
     }
