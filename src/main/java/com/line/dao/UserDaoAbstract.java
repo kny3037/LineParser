@@ -5,20 +5,12 @@ import com.line.domain.User;
 import java.sql.*;
 import java.util.Map;
 
-public class UserDao {
+public abstract class UserDaoAbstract {
 
-    private ConnectionMaker connectionMaker;
-
-    public UserDao(){
-        this.connectionMaker = new AWSConnectionMaker();
-    }
-
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
     public void add(User user) throws SQLException, ClassNotFoundException {
-        Connection conn = connectionMaker.getConnection();
+        Connection conn = getConnection();
 
         //Query 문 작성
         PreparedStatement ps = conn.prepareStatement(
@@ -35,15 +27,13 @@ public class UserDao {
 
     public User select(String id) throws SQLException, ClassNotFoundException {
 
-        Connection connection = connectionMaker.getConnection();
+        Connection connection = getConnection();
 
         //Query 문 작성
         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM users where id = ?");
         pstmt.setString(1,id);
         ResultSet rs = pstmt.executeQuery();
-        //ResultSet : 조회결과를 참조할 수 있는 클래스와 그 메소드를 사용한다.
         rs.next();
-        // 형태는 rs.next가 DB의 첫 row부터 내려가도록 해주는 역할.
         User user = new User(rs.getString("id"), rs.getString("name"),rs.getString("password"));
         //사용 종료 close.
         rs.close();
@@ -54,8 +44,8 @@ public class UserDao {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDao();
-        userDao.add(new User("2", "kate", "123"));
+      //  UserDaoAbstract userDao = new UserDaoAbstract();
+     //   userDao.add(new User("7", "Ruru", "123"));
 
        // System.out.println(user.getName());
     }
