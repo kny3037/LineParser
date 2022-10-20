@@ -1,6 +1,7 @@
 package com.line.dao;
 
 import com.line.domain.User;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.*;
 import java.util.Map;
@@ -69,15 +70,22 @@ public class UserDao {
         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM users where id = ?");
         pstmt.setString(1,id);
         ResultSet rs = pstmt.executeQuery();
+        User user = null;
         //ResultSet : 조회결과를 참조할 수 있는 클래스와 그 메소드를 사용한다.
-        rs.next();
+        if(rs.next()){
+            user = new User(rs.getString("id"),
+                    rs.getString("name"),rs.getString("password"));
+        }
         // 형태는 rs.next가 DB의 첫 row부터 내려가도록 해주는 역할.
-        User user = new User(rs.getString("id"), rs.getString("name"),rs.getString("password"));
+
         //사용 종료 close.
         rs.close();
         pstmt.close();
         connection.close();
 
+        //없으면 exception.
+        if (user == null) throw new EmptyResultDataAccessException(1);
+        // 구체적인 에러를 알 수 있다.
         return user;
     }
 
