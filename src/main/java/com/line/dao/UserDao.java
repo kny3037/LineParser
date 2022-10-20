@@ -29,6 +29,22 @@ public class UserDao {
 
     }
 
+    public int getCount() throws SQLException, ClassNotFoundException {
+        Connection connection = connectionMaker.getConnection();
+        PreparedStatement pstmt = connection.prepareStatement("SELECT COUNT(*) FROM users");
+
+        ResultSet rs = pstmt.executeQuery();
+
+        rs.next();
+        int conut = rs.getInt(1);
+
+        rs.close();
+        pstmt.close();
+        connection.close();
+
+        return conut;
+    }
+
     public void add(User user) throws SQLException, ClassNotFoundException {
         Connection conn = connectionMaker.getConnection();
 
