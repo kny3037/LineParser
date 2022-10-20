@@ -20,30 +20,64 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        Connection connection = connectionMaker.getConnection();
+        Connection connection = null;
+        PreparedStatement pstmt = null;
 
-        PreparedStatement pstmt = connection.prepareStatement("DELETE FROM users");
-        pstmt.executeUpdate();
-
-        pstmt.close();
-        connection.close();
-
+        try {
+            connection = connectionMaker.getConnection();
+            pstmt = connection.prepareStatement("DELETE FROM users");
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {  //error가 나도 실행되는 블럭.
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
-        Connection connection = connectionMaker.getConnection();
-        PreparedStatement pstmt = connection.prepareStatement("SELECT COUNT(*) FROM users");
+        Connection connection = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
-        ResultSet rs = pstmt.executeQuery();
-
-        rs.next();
-        int conut = rs.getInt(1);
-
-        rs.close();
-        pstmt.close();
-        connection.close();
-
-        return conut;
+        try {
+            connection = connectionMaker.getConnection();
+            pstmt = connection.prepareStatement("SELECT COUNT(*) FROM users");
+            rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException {
