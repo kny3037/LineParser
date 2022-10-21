@@ -89,19 +89,8 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException {
-        Connection conn = connectionMaker.getConnection();
-
-        //Query 문 작성
-        PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO users(id, name, password) value (?,?,?)"
-        );
-        ps.setString(1,user.getId());
-        ps.setString(2,user.getName());
-        ps.setString(3,user.getPassword());
-
-        ps.executeUpdate();  // select 구문을 제외한 다른 구문을 수행할 때 사용되는 함수
-        ps.close();
-        conn.close();
+        AddStrategy addStrategy = new AddStrategy(user);
+        jdbcContextWithStatmentStrategy(addStrategy);
     }
 
     public User select(String id) throws SQLException, ClassNotFoundException {
