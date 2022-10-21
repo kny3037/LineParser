@@ -19,7 +19,7 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public void deleteAll() throws SQLException, ClassNotFoundException {
+    public void jdbcContextWithStatmentStrategy(StatmentStrategy stmt) throws ClassNotFoundException {
         // try ~ catch는 catch문을 실행하고 *사용자가 프로그램을 종료할 수도 있고 계속 구문을 실행할 수도* 있다.
         // throws는 예외를 해당 구문에 던져주어 책임을 전가하고 예외상황을 처리가 수행된 후 *프로그램이 종료* 된다.
         Connection connection = null;
@@ -45,6 +45,10 @@ public class UserDao {
                 }
             }
         }
+    }
+
+    public void deleteAll() throws SQLException, ClassNotFoundException {
+        jdbcContextWithStatmentStrategy(new DeleteAllStrategy());
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
