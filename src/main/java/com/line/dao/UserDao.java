@@ -20,6 +20,8 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
+        // try ~ catch는 catch문을 실행하고 *사용자가 프로그램을 종료할 수도 있고 계속 구문을 실행할 수도* 있다.
+        // throws는 예외를 해당 구문에 던져주어 책임을 전가하고 예외상황을 처리가 수행된 후 *프로그램이 종료* 된다.
         Connection connection = null;
         PreparedStatement pstmt = null;
 
@@ -48,17 +50,19 @@ public class UserDao {
     public int getCount() throws SQLException, ClassNotFoundException {
         Connection connection = null;
         PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        ResultSet rs = null;  //select 쿼리를 실행할 때 사용
 
         try {
             connection = connectionMaker.getConnection();
             pstmt = connection.prepareStatement("SELECT COUNT(*) FROM users");
-            rs = pstmt.executeQuery();
-            rs.next();
+            rs = pstmt.executeQuery(); // select 구문을 수행 할 때 사용되는 함수
+            rs.next();  // 커서를 다음 행으로 이동시키는 역할.
+            // 다음 행으로 넘어갈 수 있으면 true를 리턴하고 커서가 넘어가고,
+            // 마지막 행에 도달하면 false를 리턴.
             return rs.getInt(1);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } finally {//error가 나도 실행되는 블럭.
             if (rs != null){
                 try {
                     rs.close();
@@ -91,7 +95,7 @@ public class UserDao {
         ps.setString(2,user.getName());
         ps.setString(3,user.getPassword());
 
-        ps.executeUpdate();
+        ps.executeUpdate();  // select 구문을 제외한 다른 구문을 수행할 때 사용되는 함수
         ps.close();
         conn.close();
     }
@@ -118,8 +122,12 @@ public class UserDao {
         connection.close();
 
         //없으면 exception.
-        if (user == null) throw new EmptyResultDataAccessException(1);
         // 구체적인 에러를 알 수 있다.
+        if (user == null) throw new EmptyResultDataAccessException(1);
+        // 소스에서 해당아이디로 조회를 했을 때 유저 정보가 null이면 예외처리
+        // EmptyResultDataAccessException : 데이터에 접근 할 때 결과가 적어도 1줄 이상
+        // 있어야 하지만 실제로 아무런 줄도 리턴되지 않을 때 발생하는 예외
+
         return user;
     }
 
