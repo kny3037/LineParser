@@ -16,6 +16,7 @@ public class UserDao {
         this.jdbcContext = new JdbcContext(dataSource);
     }
 
+
     public void add(final User user) throws SQLException, ClassNotFoundException {
         jdbcContext.workWithStatmentStrategy(new StatmentStrategy() {
             @Override
@@ -62,14 +63,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        StatmentStrategy deleteAllstrategy = new StatmentStrategy()
-        {
-            @Override
-            public PreparedStatement makePreparedStatment(Connection connection) throws SQLException {
-                return connection.prepareStatement("delete from users");
-            }
-        };
-        jdbcContext.workWithStatmentStrategy(deleteAllstrategy);
+        this.jdbcContext.excuteSql("delete from users");
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
@@ -108,9 +102,4 @@ public class UserDao {
             }
         }
     }
-
-
-
-
-
 }
